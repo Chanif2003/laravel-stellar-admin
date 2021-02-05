@@ -2,8 +2,14 @@
 
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\LoginController;
+
 //Admin namespace
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,10 +26,16 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::group(['namespace' => 'Admin','prefix' => 'admin'],function(){
+Route::view('/login','auth.login')->name('login');
+Route::post('/login',[LoginController::class,'authenticate']);
+
+Route::group(['namespace' => 'Admin','prefix' => 'admin','middleware' => 'auth'],function(){
 	Route::name('admin.')->group(function(){
 		Route::get('/dashboard',[DashboardController::class,'index'])->name('dashboard');
 		Route::view('/example','admin.example')->name('example');
+		Route::resource('/roles',RoleController::class);
+		Route::resource('/users', UserController::class);
+    	Route::resource('/products', ProductController::class);
 	});
 });
 
