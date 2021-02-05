@@ -29,13 +29,18 @@ Route::get('/', function () {
 Route::view('/login','auth.login')->name('login');
 Route::post('/login',[LoginController::class,'authenticate']);
 
-Route::group(['namespace' => 'Admin','prefix' => 'admin','middleware' => 'auth'],function(){
+Route::group(['prefix' => 'admin','middleware' => 'auth'],function(){
 	Route::name('admin.')->group(function(){
-		Route::get('/dashboard',[DashboardController::class,'index'])->name('dashboard');
-		Route::view('/example','admin.example')->name('example');
-		Route::resource('/roles',RoleController::class);
-		Route::resource('/users', UserController::class);
-    	Route::resource('/products', ProductController::class);
+		
+		Route::namespace('Admin')->group(function(){
+			Route::get('/dashboard',[DashboardController::class,'index'])->name('dashboard');
+			Route::view('/example','admin.example')->name('example');
+		});
+
+		Route::resource('/roles','RoleController');
+		Route::resource('/users','UserController');
+    	Route::resource('/products','ProductController');
+	
 	});
 });
 
